@@ -12,7 +12,7 @@ router.get("/", (req, res) => {
       selectAllCards(
          "6781066b-a2a5-4670-b473-213eb446b101",
          "ash",
-         "`memory_cards`.`created_at` ASC"
+         "`memory_cards`.`created_at` DESC"
       )
    )
       .then((dbRes) => {
