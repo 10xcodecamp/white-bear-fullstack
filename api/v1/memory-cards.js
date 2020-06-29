@@ -8,15 +8,10 @@ const selectAllCards = require("../../queries/selectAllCards");
 // @desc       Get all memory cards for a user by search term and order
 // @access     Public
 router.get("/", (req, res) => {
-   db.query(
-      selectAllCards(
-         "6781066b-a2a5-4670-b473-213eb446b101",
-         "ash",
-         "`memory_cards`.`created_at` DESC"
-      )
-   )
+   console.log(req.query);
+   const { userId, searchTerm, order } = req.query;
+   db.query(selectAllCards(userId, searchTerm, order))
       .then((dbRes) => {
-         console.log(dbRes);
          res.json(dbRes);
       })
       .catch((err) => {
