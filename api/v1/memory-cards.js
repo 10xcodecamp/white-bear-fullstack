@@ -21,7 +21,7 @@ router.get("/", (req, res) => {
       userId,
       constructedSearchTerm,
       constructedSearchTerm,
-      order,
+      { toSqlString: () => order },
    ])
       .then((memoryCards) => {
          const mappedMemoryCards = memoryCards.map((memoryCard) => {
@@ -37,6 +37,7 @@ router.get("/", (req, res) => {
                level: memoryCard.level,
             };
          });
+         console.log(mappedMemoryCards);
          res.json(mappedMemoryCards);
       })
       .catch((err) => {
