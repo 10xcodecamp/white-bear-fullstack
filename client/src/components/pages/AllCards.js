@@ -1,6 +1,7 @@
 import React from "react";
 import AppTemplate from "../ui/AppTemplate";
 import MemoryCard from "../ui/MemoryCard";
+import orderBy from "lodash/orderBy";
 import axios from "axios";
 const userId = "6781066b-a2a5-4670-b473-213eb446b101";
 
@@ -9,42 +10,72 @@ export default class AllCards extends React.Component {
       super(props);
 
       this.state = {
-         memoryCards: [],
-         order: "memory_cards.created_at%20DESC",
-         searchTerm: "",
+         order: '[["createdAt"], ["desc"]]',
+         displayedMemoryCards: [],
+         allMemoryCards: [],
       };
    }
 
    componentDidMount() {
-      this.setMemoryCards();
+      axios
+         .get(
+            `/api/v1/memory-cards?userId=${userId}&order=%60memory_cards%60.%60created_at%60%20DESC`
+         )
+         .then((res) => {
+            // handle success
+            console.log(res.data);
+            const memoryCards = res.data;
+            this.setState({
+               displayedMemoryCards: orderBy(
+                  memoryCards,
+                  ["createdAt"],
+                  ["desc"]
+               ),
+               allMemoryCards: orderBy(memoryCards, ["createdAt"], ["desc"]),
+            });
+         })
+         .catch((error) => {
+            // handle error
+            console.log(error);
+         });
    }
 
-   setSearchTerm() {
+   filterByInput() {
       const input = document.getElementById("search-input").value;
       const lowerCasedInput = input.toLowerCase();
-      this.setState({ searchTerm: lowerCasedInput }, () => {
+      console.log(lowerCasedInput);
+      const copyOfAllMemoryCards = [...this.state.allMemoryCards];
+      const filteredMemoryCards = copyOfAllMemoryCards.filter((memoryCard) => {
+         const lowerCasedImagery = memoryCard.imagery.toLowerCase();
+         const lowerCasedAnswer = memoryCard.answer.toLowerCase();
+         if (
+            lowerCasedImagery.includes(lowerCasedInput) ||
+            lowerCasedAnswer.includes(lowerCasedInput)
+         ) {
+            return true;
+         } else return false;
+      });
+      this.setState({ displayedMemoryCards: filteredMemoryCards }, () => {
          this.setMemoryCards();
       });
    }
 
    setOrder(e) {
       const newOrder = e.target.value;
+      console.log(newOrder); // "['totalSuccessfulAttempts', 'createdAt'], ['desc', 'desc']"
       this.setState({ order: newOrder }, () => {
          this.setMemoryCards();
       });
    }
 
    setMemoryCards() {
-      axios
-         .get(
-            `/api/v1/memory-cards?userId=${userId}&searchTerm=${this.state.searchTerm}&order=${this.state.order}`
-         )
-         .then((res) => {
-            this.setState({ memoryCards: res.data });
-         })
-         .catch((error) => {
-            console.log(error);
-         });
+      console.log("setting memory cards");
+      const copyOfDisplayedMemoryCards = [...this.state.displayedMemoryCards];
+      const toJson = JSON.parse(this.state.order);
+      console.log(...toJson);
+      const orderedMemoryCards = orderBy(copyOfDisplayedMemoryCards, ...toJson);
+      console.log(orderedMemoryCards);
+      this.setState({ displayedMemoryCards: orderedMemoryCards });
    }
 
    render() {
@@ -62,7 +93,7 @@ export default class AllCards extends React.Component {
                <div className="col-4">
                   <button
                      className="btn btn-primary btn-block btn-sm"
-                     onClick={() => this.setSearchTerm()}
+                     onClick={() => this.filterByInput()}
                   >
                      Search
                   </button>
@@ -79,23 +110,21 @@ export default class AllCards extends React.Component {
                      className="form-control form-control-sm"
                      onChange={(e) => this.setOrder(e)}
                   >
-                     <option value="memory_cards.created_at%20DESC">
+                     <option value='[["createdAt"], ["desc"]]'>
                         Most recent
                      </option>
-                     <option value="memory_cards.created_at%20ASC">
-                        Oldest
-                     </option>
-                     <option value="memory_cards.total_successful_attempts%20ASC%2C%20memory_cards.created_at%20ASC">
+                     <option value='[["createdAt"], ["asc"]]'>Oldest</option>
+                     <option value='[["totalSuccessfulAttempts", "createdAt"], ["asc", "asc"]]'>
                         Hardest
                      </option>
-                     <option value="memory_cards.total_successful_attempts%20DESC%2C%20memory_cards.created_at%20DESC">
+                     <option value='[["totalSuccessfulAttempts", "createdAt"], ["desc", "desc"]]'>
                         Easiest
                      </option>
                   </select>
                </div>
             </div>
 
-            {this.state.memoryCards.map((memoryCard) => {
+            {this.state.displayedMemoryCards.map((memoryCard) => {
                return <MemoryCard card={memoryCard} key={memoryCard.id} />;
             })}
          </AppTemplate>
