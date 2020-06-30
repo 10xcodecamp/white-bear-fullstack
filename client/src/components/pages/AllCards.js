@@ -3,6 +3,7 @@ import AppTemplate from "../ui/AppTemplate";
 import MemoryCard from "../ui/MemoryCard";
 import orderBy from "lodash/orderBy";
 import axios from "axios";
+const userId = "6781066b-a2a5-4670-b473-213eb446b101";
 
 export default class AllCards extends React.Component {
    constructor(props) {
@@ -18,7 +19,7 @@ export default class AllCards extends React.Component {
    componentDidMount() {
       axios
          .get(
-            "/api/v1/memory-cards?userId=6781066b-a2a5-4670-b473-213eb446b101&searchTerm=e&order=%60memory_cards%60.%60created_at%60%20DESC"
+            `/api/v1/memory-cards?userId=${userId}&order=%60memory_cards%60.%60created_at%60%20DESC`
          )
          .then((res) => {
             // handle success
