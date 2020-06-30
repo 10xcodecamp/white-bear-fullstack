@@ -1,0 +1,102 @@
+.background-image {
+   /* https://css-tricks.com/perfect-full-page-background-image/ */
+   background: url("../img/background-landing.jpg") no-repeat center center
+      fixed;
+   background-size: cover;
+   min-height: 100vh;
+}
+
+.card-body {
+   color: $white;
+   font-family: $font-family-serif;
+}
+
+.text-brand {
+   font-family: $font-family-brand;
+}
+
+.text-sans {
+   font-family: $font-family-sans-serif;
+}
+
+.text-serif {
+   font-family: $font-family-serif;
+}
+
+@include media-breakpoint-down(xs) {
+   .logo-text-fluid {
+      font-size: 36px;
+   }
+}
+
+@include media-breakpoint-down(md) {
+   .logo-img-fluid {
+      width: 120px;
+   }
+}
+
+@include media-breakpoint-down(xs) {
+   .logo-img-fluid {
+      width: 100px;
+   }
+}
+
+@include media-breakpoint-up(xl) {
+   .branding-margin {
+      margin-left: -45px;
+   }
+}
+.btn-link {
+   font-weight: $font-weight-bold;
+   padding-left: 0;
+   padding-right: 0;
+   border: none;
+}
+
+.btn-group .btn {
+   font-weight: $font-weight-normal;
+}
+
+.card-body.bg-primary {
+   border-top-left-radius: $border-radius;
+   border-top-right-radius: $border-radius;
+}
+
+.card-body.bg-secondary {
+   border-bottom-left-radius: $border-radius;
+   border-bottom-right-radius: $border-radius;
+}
+
+.tab-active {
+   background-color: $dark;
+   border: $border-width $dark solid;
+}
+
+.tab-separator {
+   border-left: 1px $dark solid;
+}
+
+textarea {
+   width: 100%;
+   background-color: transparent;
+   color: $white;
+
+   // remove all styling: https://stackoverflow.com/a/17110012/6305196
+   border: none;
+   overflow: auto;
+   outline: none;
+   -webkit-box-shadow: none;
+   -moz-box-shadow: none;
+   box-shadow: none;
+   resize: none;
+}
+
+.bg-success,
+.bg-danger {
+   color: $white;
+}
+
+.disabled {
+   pointer-events: fill !important;
+   cursor: not-allowed;
+}
