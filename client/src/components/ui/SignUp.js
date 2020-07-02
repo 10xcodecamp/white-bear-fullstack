@@ -1,6 +1,5 @@
 import React from "react";
 import classnames from "classnames";
-import hash from "object-hash";
 import { v4 as getUuid } from "uuid";
 import { EMAIL_REGEX } from "../../utils/helpers";
 import { withRouter } from "react-router-dom";
@@ -93,33 +92,26 @@ class SignUp extends React.Component {
          this.state.hasEmailError === false &&
          this.state.hasPasswordError === false
       ) {
+         // Create user obj
          const user = {
             id: getUuid(),
             email: emailInput,
-            password: hash(passwordInput),
+            password: passwordInput,
             createdAt: Date.now(),
          };
          console.log("Created user object for POST: ", user);
-
-         // Mimic API response:
+         // post to API
          axios
-            .get(
-               "https://raw.githubusercontent.com/punchcode-fullstack/white-bear-mpa/localstates/src/mock-data/user.json"
-            )
+            .post("/api/v1/users", user)
             .then((res) => {
-               // handle success
-               const currentUser = res.data;
-               console.log(currentUser);
-               this.props.dispatch({
-                  type: actions.UPDATE_CURRENT_USER,
-                  payload: res.data,
-               });
+               console.log(res);
             })
-            .catch((error) => {
-               // handle error
-               console.log(error);
+            .catch((err) => {
+               console.log(err);
             });
-         this.props.history.push("/create-answer");
+
+         // Update currentUser in global state with API response
+         // Go to next page: this.props.history.push("/create-answer");
       }
    }
 
@@ -159,6 +151,10 @@ class SignUp extends React.Component {
 
                         <label htmlFor="signup-password-input">
                            Create a password
+                           <br />
+                           <span className="text-muted">
+                              Must be at least 9 characters
+                           </span>
                         </label>
                         <input
                            type="password"
