@@ -1,9 +1,4 @@
 const insertUser = `
-INSERT INTO users (
-   id,
-   email,
-   \`password\`,
-   created_at
-)
-   VALUES (?, ?, ?, ?);
+   INSERT INTO users SET ?;
 `;
+module.exports = insertUser;

@@ -26,10 +26,22 @@ router.get("/", (req, res) => {
 // @desc       Create a new user
 // @access     Public
 router.post("/", async (req, res) => {
-   const user = req.body;
-   user.password = await toHash(user.password);
-   console.log(user);
-   db.query(insertUser, []).then().catch();
+   const user = {
+      id: req.body.id,
+      email: req.body.email,
+      password: await toHash(req.body.password),
+      created_at: req.body.createdAt,
+   };
+
+   db.query(insertUser, user)
+      .then((dbRes) => {
+         console.log(dbRes);
+         // return the user data so we can put in redux store
+      })
+      .catch((err) => {
+         console.log(err);
+         // return a 400 error to user
+      });
 });
 
 module.exports = router;
