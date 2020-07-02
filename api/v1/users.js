@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../../db");
 const selectUser = require("../../queries/selectUser");
+const insertUser = require("../../queries/insertUser");
 const { toJson, toSafeParse, toHash } = require("../../utils/helpers");
 
 // @route      GET api/v1/users
@@ -28,6 +29,7 @@ router.post("/", async (req, res) => {
    const user = req.body;
    user.password = await toHash(user.password);
    console.log(user);
+   db.query(insertUser, []).then().catch();
 });
 
 module.exports = router;
