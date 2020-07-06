@@ -51,4 +51,15 @@ router.post("/", async (req, res) => {
    }
 });
 
+// @route      POST api/v1/users/auth
+// @desc       Check this user against the db via email and password
+// @access     Public
+
+router.post("/auth", async (req, res) => {
+   const { email, password } = req.body;
+   const emailError = getLoginEmailError(email);
+   const passwordError = await getLoginPasswordError(password, email);
+   let dbError = "";
+});
+
 module.exports = router;
