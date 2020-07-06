@@ -15,14 +15,20 @@ module.exports = async function getSignUpPasswordError(password, email) {
 function checkIsValidUser(email, password) {
    return db
       .query(selectUserByEmail, email)
-      .then((users) => {
+      .then(async (users) => {
          const user = users[0];
-         bcrypt.compare(password, user.password).then((isValidUser) => {
-            console.log(isValidUser);
-            return isValidUser;
-         });
+         const isValidUser = await bcrypt
+            .compare(password, user.password)
+            .then((isValidUser) => {
+               console.log(isValidUser);
+               return isValidUser;
+            })
+            .catch((err) => {
+               console.log(err);
+            });
+         return isValidUser;
       })
       .catch((err) => {
-         console.log(err);
+         return false;
       });
 }
