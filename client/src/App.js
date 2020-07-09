@@ -10,6 +10,35 @@ import ReviewEmpty from "./components/pages/ReviewEmpty";
 import AllCards from "./components/pages/AllCards";
 import Edit from "./components/pages/Edit";
 import NotFound from "./components/pages/NotFound";
+import jwtDecode from "jwt-decode";
+import store from "./store/store";
+import actions from "./store/actions";
+
+const authToken = localStorage.authToken;
+if (authToken) {
+   const user = jwtDecode(authToken);
+   const currentTimeInSec = Date.now() / 1000;
+   if (currentTimeInSec > user.exp) {
+      console.log("there is an expired token");
+      store.dispatch({
+         type: actions.UPDATE_CURRENT_USER,
+         payload: {},
+      });
+   } else {
+      console.log("there is a valid token");
+      store.dispatch({
+         type: actions.UPDATE_CURRENT_USER,
+         payload: user,
+      });
+      // set authorization headers
+      const url = window.location.pathname;
+      if (url === "/") {
+         window.location.href = "/create-answer";
+      }
+   }
+} else {
+   console.log("there is no token");
+}
 
 function App() {
    return (
