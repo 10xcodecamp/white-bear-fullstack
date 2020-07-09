@@ -4,7 +4,6 @@ import { withRouter } from "react-router-dom";
 import axios from "axios";
 import actions from "../../store/actions";
 import { connect } from "react-redux";
-import jwtDecode from "jwt-decode";
 
 class LogIn extends React.Component {
    constructor(props) {
@@ -21,6 +20,7 @@ class LogIn extends React.Component {
       const emailInput = document.getElementById("login-email-input").value;
       const passwordInput = document.getElementById("login-password-input")
          .value;
+
       const user = {
          email: emailInput,
          password: passwordInput,
@@ -30,18 +30,13 @@ class LogIn extends React.Component {
          .post("/api/v1/users/auth", user)
          .then((res) => {
             // Update currentUser in global state with API response
-            const authToken = res.data;
-            localStorage.setItem("authToken", authToken);
-            const user = jwtDecode(authToken);
-
             this.props.dispatch({
                type: actions.UPDATE_CURRENT_USER,
-               payload: user,
+               payload: res.data,
             });
             this.props.history.push("/create-answer");
          })
          .catch((err) => {
-            console.log(err);
             const { data } = err.response;
             console.log(data);
             const { emailError, passwordError } = data;
