@@ -16,7 +16,6 @@ import actions from "./store/actions";
 
 const authToken = localStorage.authToken;
 if (authToken) {
-   // if the authToken is not expired
    const currentTimeInSec = Date.now() / 1000;
    const user = jwtDecode(authToken);
    if (currentTimeInSec > user.exp) {
