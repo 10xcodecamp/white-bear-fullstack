@@ -3,15 +3,13 @@ const express = require("express");
 const router = express.Router();
 const db = require("../../db");
 const selectAllCards = require("../../queries/selectAllCards");
-const validateJwt = require("../../utils/validateJwt");
 
 // @route      GET api/v1/memory-cards
 // @desc       Get all memory cards for a user by search term and order
-// @access     Private
-router.get("/", validateJwt, (req, res) => {
-   const { searchTerm, order } = req.query;
-   const userId = req.user.id;
-
+// @access     Public
+router.get("/", (req, res) => {
+   console.log(req.query);
+   const { userId, searchTerm, order } = req.query;
    let constructedSearchTerm;
    if (searchTerm === "" || searchTerm === undefined) {
       constructedSearchTerm = "%%";
