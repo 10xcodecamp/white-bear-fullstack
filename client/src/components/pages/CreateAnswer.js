@@ -1,11 +1,11 @@
 import React from "react";
 import AppTemplate from "../ui/AppTemplate";
-import { Link } from "react-router-dom";
 import classnames from "classnames";
-import { checkIsOver, MAX_CARD_CHARS } from "../../utils/helpers";
+import { checkIsOver, MAX_CARD_CHARS, defaultLevel } from "../../utils/helpers";
 import { connect } from "react-redux";
 import actions from "../../store/actions";
 import { v4 as getUuid } from "uuid";
+import getNextAttemptAt from "../../utils/getNextAttemptAt";
 
 class CreateAnswer extends React.Component {
    constructor(props) {
@@ -30,21 +30,23 @@ class CreateAnswer extends React.Component {
 
    setCreatableCard() {
       console.log("UPDATE_CREATABLE_CARD");
+      const currentTime = Date.now();
       this.props.dispatch({
          type: actions.UPDATE_CREATABLE_CARD,
          payload: {
             // the card itself
             id: getUuid(),
-            answer: "",
+            answer: this.state.answerText,
             imagery: "",
-            userId: "",
-            createdAt: Date.now(),
-            nextAttemptAt: 0, //
-            lastAttemptAt: Date.now(),
+            userId: this.props.currentUser.id,
+            createdAt: currentTime,
+            nextAttemptAt: getNextAttemptAt(defaultLevel, Date.now()),
+            lastAttemptAt: currentTime,
             totalSuccessfulAttempts: 0,
             level: 1,
          },
       });
+      this.props.history.push("/create-imagery");
    }
 
    render() {
@@ -96,7 +98,7 @@ class CreateAnswer extends React.Component {
 }
 
 function mapStateToProps(state) {
-   return {};
+   return { currentUser: state.currentUser };
 }
 
 export default connect(mapStateToProps)(CreateAnswer);

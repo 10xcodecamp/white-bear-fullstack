@@ -4,8 +4,10 @@ import AppTemplate from "../ui/AppTemplate";
 import { Link } from "react-router-dom";
 import classnames from "classnames";
 import { checkIsOver, MAX_CARD_CHARS } from "../../utils/helpers";
+import { connect } from "react-redux";
+import actions from "../../store/actions";
 
-export default class CreateImagery extends React.Component {
+class CreateImagery extends React.Component {
    constructor(props) {
       super(props);
       this.state = {
@@ -25,6 +27,38 @@ export default class CreateImagery extends React.Component {
          return true;
       } else return false;
    }
+
+   updateCreatableCard() {
+      console.log("UPDATING CREATABLE CARD");
+      const {
+         id,
+         answer,
+         userId,
+         createdAt,
+         nextAttemptAt,
+         lastAttemptAt,
+         totalSuccessfulAttempts,
+         level,
+      } = this.props.creatableCard;
+      this.props.dispatch({
+         type: actions.UPDATE_CREATABLE_CARD,
+         payload: {
+            // the card itself
+            id,
+            answer,
+            imagery: this.state.imageryText,
+            userId,
+            createdAt,
+            nextAttemptAt,
+            lastAttemptAt,
+            totalSuccessfulAttempts,
+            level,
+         },
+      });
+      // save to the database (make an API call)
+      // go to create-answer
+   }
+
    render() {
       return (
          <AppTemplate>
@@ -44,10 +78,7 @@ export default class CreateImagery extends React.Component {
 
             <div className="card">
                <div className="card-body bg-secondary lead">
-                  The European languages are members of the same family. Their
-                  separate existence is a myth. For science, music, sport, etc,
-                  Europe uses the same vocabulary. The languages only differ in
-                  their grammar,.
+                  {this.props.creatableCard.answer}
                </div>
             </div>
 
@@ -77,6 +108,9 @@ export default class CreateImagery extends React.Component {
                      disabled: this.checkHasInvalidCharCount(),
                   }
                )}
+               onClick={() => {
+                  this.updateCreatableCard();
+               }}
             >
                <img
                   src={saveIcon}
@@ -90,3 +124,9 @@ export default class CreateImagery extends React.Component {
       );
    }
 }
+
+function mapStateToProps(state) {
+   return { creatableCard: state.creatableCard };
+}
+
+export default connect(mapStateToProps)(CreateImagery);
