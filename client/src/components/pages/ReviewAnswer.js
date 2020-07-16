@@ -13,6 +13,21 @@ class ReviewAnswer extends React.Component {
       }
    }
 
+   updateCardWithNeedsWork(memoryCard) {
+      this.goToNextCard();
+   }
+
+   updateCardWithGotIt(memoryCard) {
+      memoryCard.totalSuccessfulAttempts += 1;
+      memoryCard.lastAttemptAt = Date.now();
+
+      // update the global state
+      // db PUT this card in our axios req
+      // TODO: on success, fire success overlay
+      // TODO: on error, fire error overlay
+      this.goToNextCard();
+   }
+
    goToNextCard() {
       if (this.props.queue.index === this.props.queue.cards.length - 1) {
          // you're on the last card
@@ -24,9 +39,8 @@ class ReviewAnswer extends React.Component {
       }
    }
 
-   storeEditableCard() {
+   storeEditableCard(memoryCard) {
       console.log("STORING EDITABLE CARD");
-      const memoryCard = this.props.queue.cards[this.props.queue.index];
       this.props.dispatch({
          type: actions.STORE_EDITABLE_CARD,
          payload: {
@@ -37,7 +51,8 @@ class ReviewAnswer extends React.Component {
    }
 
    render() {
-      const memoryCard = this.props.queue.cards[this.props.queue.index];
+      const memoryCard = { ...this.props.queue.cards[this.props.queue.index] };
+      console.log("memory card: ", memoryCard);
       return (
          <AppTemplate>
             <div className="mb-5"></div>
@@ -58,7 +73,7 @@ class ReviewAnswer extends React.Component {
                to="/edit"
                className="btn btn-link"
                onClick={() => {
-                  this.storeEditableCard();
+                  this.storeEditableCard(memoryCard);
                }}
             >
                Edit
@@ -67,7 +82,7 @@ class ReviewAnswer extends React.Component {
                <button
                   className="btn btn-outline-primary"
                   onClick={() => {
-                     this.goToNextCard();
+                     this.updateCardWithNeedsWork(memoryCard);
                   }}
                >
                   Needs work
@@ -75,7 +90,7 @@ class ReviewAnswer extends React.Component {
                <button
                   className="btn btn-primary ml-4"
                   onClick={() => {
-                     this.goToNextCard();
+                     this.updateCardWithGotIt(memoryCard);
                   }}
                >
                   <img
