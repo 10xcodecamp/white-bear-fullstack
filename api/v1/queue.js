@@ -2,29 +2,16 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../../db");
-const selectAllCards = require("../../queries/selectAllCards");
+const selectQueue = require("../../queries/selectQueue");
 const validateJwt = require("../../utils/validateJwt");
 
 // @route      GET api/v1/queue
 // @desc       Get all memory cards for a user that are queued to occur next
 // @access     Private
 router.get("/", validateJwt, (req, res) => {
-   console.log(req.query);
-   const { searchTerm, order } = req.query;
    const userId = req.user.id;
-   let constructedSearchTerm;
-   if (searchTerm === "" || searchTerm === undefined) {
-      constructedSearchTerm = "%%";
-   } else {
-      constructedSearchTerm = `%${searchTerm}%`;
-   }
-   /* https://www.npmjs.com/package/mysql#escaping-query-values */
-   db.query(selectAllCards, [
-      userId,
-      constructedSearchTerm,
-      constructedSearchTerm,
-      { toSqlString: () => order },
-   ])
+
+   db.query(selectQueue, userId)
       .then((memoryCards) => {
          const camelCaseMemoryCards = memoryCards.map((memoryCard) => {
             return {
@@ -39,10 +26,12 @@ router.get("/", validateJwt, (req, res) => {
                level: memoryCard.level,
             };
          });
-         res.json(camelCaseMemoryCards);
+         res.status(200).json(camelCaseMemoryCards);
       })
       .catch((err) => {
          console.log(err);
          res.status(400).json(err);
       });
 });
+
+module.exports = router;
