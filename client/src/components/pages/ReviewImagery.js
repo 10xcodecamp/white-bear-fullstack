@@ -11,9 +11,7 @@ class ReviewImagery extends React.Component {
 
       if (props.queue.cards.length === 0) {
          axios
-            .get(
-               "https://raw.githubusercontent.com/punchcode-fullstack/white-bear-mpa/localstates/src/mock-data/memory-cards.json"
-            )
+            .get(`/api/v1/queue?order=memory_cards.created_at%20DESC`)
             .then((res) => {
                // handle success
                console.log(res);
