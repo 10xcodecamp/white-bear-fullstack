@@ -15,8 +15,8 @@ class Edit extends React.Component {
    constructor(props) {
       super(props);
       this.state = {
-         answerText: this.props.editableCard.card.answerText,
-         imageryText: this.props.editableCard.card.imageryText,
+         answerText: this.props.editableCard.card.answer,
+         imageryText: this.props.editableCard.card.imagery,
          isDeleteChecked: false,
       };
    }
@@ -45,26 +45,36 @@ class Edit extends React.Component {
    }
 
    saveCard() {
-      // get this.state.answerText
-      // get this.state.imageryText
-      // put into the db
-      const memoryCard = { ...this.props.editableCard.card };
-      memoryCard.answer = this.state.answerText;
-      memoryCard.imagery = this.state.imageryText;
+      if (!this.checkHasInvalidCharCount()) {
+         const memoryCard = { ...this.props.editableCard.card };
+         memoryCard.answer = this.state.answerText;
+         memoryCard.imagery = this.state.imageryText;
 
-      // db PUT this card in our axios req
-      axios
-         .put(`/api/v1/memory-cards/${memoryCard.id}`, memoryCard) // /api/v1/memory-cards/cd9883ff-fd1a-463d-8c46-cf78a785f4c3
-         .then(() => {
-            console.log("Memory Card updated");
-            // TODO: on success, fire success overlay
-            this.props.history.push(this.props.editableCard.prevRoute);
-         })
-         .catch((err) => {
-            const { data } = err.response;
-            console.log(data);
-            // TODO: Display error overlay, hide after 5 seconds
-         });
+         // db PUT this card in our axios req
+         axios
+            .put(`/api/v1/memory-cards/${memoryCard.id}`, memoryCard) // /api/v1/memory-cards/cd9883ff-fd1a-463d-8c46-cf78a785f4c3
+            .then(() => {
+               console.log("Memory Card updated");
+
+               // Update Redux queue
+               const cards = { ...this.props.queue.cards };
+               cards[this.props.queue.index] = memoryCard;
+               this.props.dispatch({
+                  type: actions.UPDATE_QUEUED_CARDS,
+                  payload: cards,
+               });
+
+               // TODO: on success, fire success overlay
+               this.props.history.push(this.props.editableCard.prevRoute);
+            })
+            .catch((err) => {
+               const { data } = err.response;
+               console.log(data);
+               // TODO: Display error overlay, hide after 5 seconds
+            });
+      } else {
+         console.log("INVALID char counts");
+      }
    }
 
    deleteCard() {
