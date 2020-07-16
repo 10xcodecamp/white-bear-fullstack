@@ -2,7 +2,6 @@ import React from "react";
 import AppTemplate from "../ui/AppTemplate";
 import { Link } from "react-router-dom";
 import saveIcon from "../../icons/save.svg";
-import memoryCards from "../../mock-data/memory-cards";
 import toDisplayDate from "date-fns/format";
 import classnames from "classnames";
 import { checkIsOver, MAX_CARD_CHARS } from "../../utils/helpers";
@@ -10,15 +9,14 @@ import { connect } from "react-redux";
 import isEmpty from "lodash/isEmpty";
 import without from "lodash/without";
 import actions from "../../store/actions";
-
-const memoryCard = memoryCards[3];
+import axios from "axios";
 
 class Edit extends React.Component {
    constructor(props) {
       super(props);
       this.state = {
-         answerText: memoryCard.answer,
-         imageryText: memoryCard.imagery,
+         answerText: this.props.editableCard.card.answerText,
+         imageryText: this.props.editableCard.card.imageryText,
          isDeleteChecked: false,
       };
    }
@@ -44,6 +42,29 @@ class Edit extends React.Component {
 
    toggleDeleteButton() {
       this.setState({ isDeleteChecked: !this.state.isDeleteChecked });
+   }
+
+   saveCard() {
+      // get this.state.answerText
+      // get this.state.imageryText
+      // put into the db
+      const memoryCard = { ...this.props.editableCard.card };
+      memoryCard.answer = this.state.answerText;
+      memoryCard.imagery = this.state.imageryText;
+
+      // db PUT this card in our axios req
+      axios
+         .put(`/api/v1/memory-cards/${memoryCard.id}`, memoryCard) // /api/v1/memory-cards/cd9883ff-fd1a-463d-8c46-cf78a785f4c3
+         .then(() => {
+            console.log("Memory Card updated");
+            // TODO: on success, fire success overlay
+            this.props.history.push(this.props.editableCard.prevRoute);
+         })
+         .catch((err) => {
+            const { data } = err.response;
+            console.log(data);
+            // TODO: Display error overlay, hide after 5 seconds
+         });
    }
 
    deleteCard() {
@@ -132,13 +153,15 @@ class Edit extends React.Component {
                      Discard changes
                   </Link>
 
-                  <Link
-                     to={this.props.editableCard.prevRoute}
+                  <button
                      className={classnames(
                         "btn btn-primary btn-lg ml-4 float-right",
                         { disabled: this.checkHasInvalidCharCount() }
                      )}
                      id="save-card"
+                     onClick={() => {
+                        this.saveCard();
+                     }}
                   >
                      <img
                         src={saveIcon}
@@ -147,7 +170,7 @@ class Edit extends React.Component {
                         alt=""
                      />
                      Save
-                  </Link>
+                  </button>
 
                   <p className="text-center lead text-muted mt-6 mb-4">
                      Card properties
