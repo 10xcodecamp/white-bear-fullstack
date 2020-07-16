@@ -21,8 +21,6 @@ class ReviewAnswer extends React.Component {
    updateCardWithGotIt(memoryCard) {
       memoryCard.totalSuccessfulAttempts += 1;
       memoryCard.lastAttemptAt = Date.now();
-      const queue = { ...this.props.queue };
-      queue.cards[this.props.queue.index] = memoryCard;
       // db PUT this card in our axios req
       axios
          .put(`/api/v1/memory-cards/${memoryCard.id}`, memoryCard) // /api/v1/memory-cards/cd9883ff-fd1a-463d-8c46-cf78a785f4c3
