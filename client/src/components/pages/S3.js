@@ -1,5 +1,6 @@
 import React from "react";
 import AppTemplate from "../ui/AppTemplate";
+import axios from "axios";
 
 class S3 extends React.Component {
    constructor() {
@@ -12,6 +13,18 @@ class S3 extends React.Component {
    setPhotoUploadText(e) {
       const text = e.target.value;
       this.setState({ photoUploadText: text });
+   }
+
+   saveProfile() {
+      const user = {};
+      axios
+         .post("/api/v1/test-users", user)
+         .then((res) => {
+            console.log(res);
+         })
+         .catch((err) => {
+            console.log(err);
+         });
    }
 
    render() {
@@ -40,7 +53,12 @@ class S3 extends React.Component {
                </label>
             </div>
 
-            <button className="btn btn-success float-right">
+            <button
+               className="btn btn-success float-right"
+               onClick={() => {
+                  this.saveProfile();
+               }}
+            >
                Save your profile
             </button>
          </AppTemplate>
