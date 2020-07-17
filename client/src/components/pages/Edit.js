@@ -57,7 +57,7 @@ class Edit extends React.Component {
                console.log("Memory Card updated");
 
                // Update Redux queue
-               const cards = { ...this.props.queue.cards };
+               const cards = [...this.props.queue.cards];
                cards[this.props.queue.index] = memoryCard;
                this.props.dispatch({
                   type: actions.UPDATE_QUEUED_CARDS,
