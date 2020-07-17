@@ -6,19 +6,27 @@ class S3 extends React.Component {
    constructor() {
       super();
       this.state = {
-         photoUploadText: "Choose a file",
+         photoUploadText: "",
+         photoUploadFile: {},
       };
    }
 
    setPhotoUploadText(e) {
-      const text = e.target.value;
-      this.setState({ photoUploadText: text });
+      const file = e.target.files[0];
+      console.log(file);
+      this.setState({
+         photoUploadText: file.name,
+         photoUploadFile: file,
+      });
    }
 
-   saveProfile() {
-      const user = {};
+   saveProfile(e) {
+      e.preventDefault();
+      const formData = new FormData();
+      formData.append("profilePhoto", this.state.photoUploadFile);
+      formData.append("handle", document.getElementById("handle").value);
       axios
-         .post("/api/v1/test-users", user)
+         .post("/api/v1/test-users", formData)
          .then((res) => {
             console.log(res);
          })
@@ -31,36 +39,42 @@ class S3 extends React.Component {
       return (
          <AppTemplate>
             <h3 className="mt-6">S3 Demo</h3>
-            <h2>Update user profile</h2>
-            <label htmlFor="username">Create a username</label>
-            <input
-               className="form-control form-control-sm mb-6"
-               type="text"
-               id="username"
-            />
+            <h2 className="mb-4">Update user profile</h2>
 
-            <div className="custom-file mb-6">
-               <input
-                  type="file"
-                  className="custom-file-input"
-                  id="photo-upload"
-                  onChange={(e) => {
-                     this.setPhotoUploadText(e);
-                  }}
-               />
-               <label className="custom-file-label" htmlFor="photo-upload">
-                  {this.state.photoUploadText}
-               </label>
-            </div>
+            {/* https://www.positronx.io/react-file-upload-tutorial-with-node-express-and-multer/ */}
+            <form onSubmit={(e) => this.saveProfile(e)}>
+               <div className="form-group">
+                  <label htmlFor="handle">Create a handle</label>
+                  <input
+                     className="form-control form-control-sm mb-6"
+                     type="text"
+                     id="handle"
+                  />
 
-            <button
-               className="btn btn-success float-right"
-               onClick={() => {
-                  this.saveProfile();
-               }}
-            >
-               Save your profile
-            </button>
+                  <p className="mb-2">Upload your profile photo</p>
+
+                  <div className="custom-file mb-6">
+                     <input
+                        type="file"
+                        className="custom-file-input"
+                        id="photo-upload"
+                        onChange={(e) => {
+                           this.setPhotoUploadText(e);
+                        }}
+                     />
+                     <label
+                        className="custom-file-label"
+                        htmlFor="photo-upload"
+                     >
+                        {this.state.photoUploadText}
+                     </label>
+                  </div>
+
+                  <button className="btn btn-success float-right" type="submit">
+                     Save your profile
+                  </button>
+               </div>
+            </form>
          </AppTemplate>
       );
    }
