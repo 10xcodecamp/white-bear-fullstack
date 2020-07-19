@@ -6,32 +6,38 @@ class S3 extends React.Component {
    constructor() {
       super();
       this.state = {
-         photoUploadText: "",
+         photoUploadText: "Choose a file",
          photoUploadFile: {},
       };
    }
 
    setPhotoUploadText(e) {
       const file = e.target.files[0];
-      console.log(file);
-      this.setState({
-         photoUploadText: file.name,
-         photoUploadFile: file,
-      });
+      if (file) {
+         this.setState({
+            photoUploadText: file.name,
+            photoUploadFile: file,
+         });
+      } else {
+         this.setState({
+            photoUploadText: "Choose a file",
+            photoUploadFile: {},
+         });
+      }
    }
 
    saveProfile(e) {
       e.preventDefault();
       const formData = new FormData();
-      formData.append("profilePhoto", this.state.photoUploadFile);
+      formData.append("profile-photo", this.state.photoUploadFile); // what you want in the url of the image
       formData.append("handle", document.getElementById("handle").value);
       axios
          .post("/api/v1/test-users", formData)
          .then((res) => {
-            console.log(res);
+            console.log(res.data);
          })
          .catch((err) => {
-            console.log(err);
+            console.log(err.response.data);
          });
    }
 

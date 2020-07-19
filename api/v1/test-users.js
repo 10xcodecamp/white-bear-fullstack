@@ -1,18 +1,27 @@
 // The queue resource
 const express = require("express");
 const router = express.Router();
-const db = require("../../db");
 const validateJwt = require("../../utils/validateJwt");
 const upload = require("../../upload");
 
 // @route      POST api/v1/test-users
 // @desc       Create a new test user in the test users resource
 // @access     Private
-router.post("/", validateJwt, upload.single("profilePhoto"), (req, res) => {
-   console.log("hit test-users API");
-   const userId = req.user.id; // TODO: remove?
-   console.log(req.body.handle);
-   console.log(req.file);
+router.post("/", validateJwt, (req, res) => {
+   upload.single("profile-photo")(req, res, (err) => {
+      if (!req.file && !err) {
+         const errorMessage = "Please choose a file to upload.";
+         return res.status(400).json({ uploadError: errorMessage });
+      } else if (!req.file && err) {
+         return res.status(400).json({ uploadError: err.message });
+      } else {
+         const profile = {
+            handle: req.body.handle,
+            profilePhotoUrl: req.file.location,
+         };
+         return res.status(200).json(profile);
+      }
+   });
 });
 
 module.exports = router;
