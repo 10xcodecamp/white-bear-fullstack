@@ -85,8 +85,11 @@ class Edit extends React.Component {
          .then((res) => {
             console.log(res.data);
             const deletableCard = this.props.editableCard.card;
+            console.log("deletableCard: ", deletableCard);
             const cards = this.props.queue.cards;
+            console.log("cards: ", cards);
             const filteredCards = without(cards, deletableCard);
+            console.log("filteredCards: ", filteredCards);
             this.props.dispatch({
                type: actions.UPDATE_QUEUED_CARDS,
                payload: filteredCards,

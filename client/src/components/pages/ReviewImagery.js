@@ -42,32 +42,40 @@ class ReviewImagery extends React.Component {
       return (
          <AppTemplate>
             <div className="mb-5"></div>
+            {memoryCard && (
+               <>
+                  <div className="card">
+                     <div className="card-body bg-primary lead">
+                        {memoryCard && memoryCard.imagery}
+                     </div>
+                  </div>
 
-            <div className="card">
-               <div className="card-body bg-primary lead">
-                  {memoryCard && memoryCard.imagery}
-               </div>
-            </div>
+                  <div className="mb-5"></div>
 
-            <div className="mb-5"></div>
+                  {this.props.queue.index > 0 && (
+                     <button
+                        className="btn btn-link"
+                        onClick={() => {
+                           this.goToPrevCard();
+                        }}
+                     >
+                        Previous card
+                     </button>
+                  )}
 
-            {this.props.queue.index > 0 && (
-               <button
-                  className="btn btn-link"
-                  onClick={() => {
-                     this.goToPrevCard();
-                  }}
-               >
-                  Previous card
-               </button>
+                  <Link
+                     to="/review-answer"
+                     className="btn btn-outline-primary float-right"
+                  >
+                     Show answer
+                  </Link>
+               </>
             )}
-
-            <Link
-               to="/review-answer"
-               className="btn btn-outline-primary float-right"
-            >
-               Show answer
-            </Link>
+            {!memoryCard && (
+               <p className="lead text-muted text-center">
+                  You have 0 cards. Please create a card before reviewing.
+               </p>
+            )}
          </AppTemplate>
       );
    }
