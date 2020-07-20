@@ -84,8 +84,9 @@ class Edit extends React.Component {
          .delete(`/api/v1/memory-cards/${memoryCard.id}`)
          .then((res) => {
             console.log(res.data);
-            const cards = [...this.props.queue.cards];
-            const filteredCards = without(cards, memoryCard);
+            const deletableCard = this.props.editableCard.card;
+            const cards = this.props.queue.cards;
+            const filteredCards = without(cards, deletableCard);
             this.props.dispatch({
                type: actions.UPDATE_QUEUED_CARDS,
                payload: filteredCards,
