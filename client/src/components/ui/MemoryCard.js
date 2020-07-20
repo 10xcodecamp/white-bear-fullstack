@@ -14,6 +14,7 @@ class MemoryCard extends React.Component {
             prevRoute: "/all-cards",
          },
       });
+      this.props.history.push("/edit");
    }
 
    render() {
@@ -34,8 +35,7 @@ class MemoryCard extends React.Component {
                </div>
             </div>
 
-            <Link
-               to="/edit"
+            <button
                className="btn btn-link ml-4 d-flex mt-n2"
                onClick={() => {
                   this.storeEditableCard(memoryCard);
@@ -49,7 +49,7 @@ class MemoryCard extends React.Component {
                   alt=""
                />
                Edit
-            </Link>
+            </button>
          </div>
       );
    }
