@@ -1,7 +1,7 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import editIcon from "../../icons/edit.svg";
 import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 import actions from "../../store/actions";
 
 class MemoryCard extends React.Component {
@@ -61,4 +61,4 @@ function mapStateToProps(state) {
    };
 }
 
-export default connect(mapStateToProps)(MemoryCard);
+export default withRouter(connect(mapStateToProps)(MemoryCard));
