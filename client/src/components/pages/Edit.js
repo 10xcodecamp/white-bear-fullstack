@@ -7,7 +7,6 @@ import classnames from "classnames";
 import { checkIsOver, MAX_CARD_CHARS } from "../../utils/helpers";
 import { connect } from "react-redux";
 import isEmpty from "lodash/isEmpty";
-import without from "lodash/without";
 import actions from "../../store/actions";
 import axios from "axios";
 
@@ -88,7 +87,9 @@ class Edit extends React.Component {
             console.log("deletableCard: ", deletableCard);
             const cards = this.props.queue.cards;
             console.log("queue cards: ", cards);
-            const filteredCards = without(cards, deletableCard); // Not filtering the deletable card from filteredCards
+            const filteredCards = cards.filter((card) => {
+               return card.id !== deletableCard.id;
+            });
             console.log("filteredCards: ", filteredCards);
             this.props.dispatch({
                type: actions.UPDATE_QUEUED_CARDS,
