@@ -87,16 +87,18 @@ class Edit extends React.Component {
             const deletableCard = this.props.editableCard.card;
             console.log("deletableCard: ", deletableCard);
             const cards = this.props.queue.cards;
-            console.log("cards: ", cards);
-            const filteredCards = without(cards, deletableCard);
+            console.log("queue cards: ", cards);
+            const filteredCards = without(cards, deletableCard); // Not filtering the deletable card from filteredCards
             console.log("filteredCards: ", filteredCards);
             this.props.dispatch({
                type: actions.UPDATE_QUEUED_CARDS,
                payload: filteredCards,
             });
+            const index = this.props.queue.index;
+            console.log({ index });
             // TODO: Display success overlay
             if (this.props.editableCard.prevRoute === "/review-answer") {
-               if (filteredCards[this.props.queue.index] === undefined) {
+               if (filteredCards[index] === undefined) {
                   this.props.history.push("/review-empty");
                } else {
                   this.props.history.push("/review-imagery");
