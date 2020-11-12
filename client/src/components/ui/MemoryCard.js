@@ -7,6 +7,10 @@ import actions from "../../store/actions";
 class MemoryCard extends React.Component {
    storeEditableCard(memoryCard) {
       console.log("STORING EDITABLE CARD");
+
+      // what if the card we delete is not in the queue?
+      // we need to understand if the card we are editing is in the queue
+
       this.props.dispatch({
          type: actions.STORE_EDITABLE_CARD,
          payload: {
@@ -19,6 +23,8 @@ class MemoryCard extends React.Component {
 
    render() {
       const memoryCard = this.props.queue.cards[this.props.queue.index];
+      console.log(this.props.queue.cards, this.props.queue.index);
+      console.log(memoryCard);
       return (
          <div className="d-flex align-items-start mb-5">
             <div className="app-card flex-fill">
