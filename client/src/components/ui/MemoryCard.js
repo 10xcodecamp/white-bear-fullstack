@@ -1,16 +1,12 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import editIcon from "../../icons/edit.svg";
 import { connect } from "react-redux";
-import { withRouter } from "react-router-dom";
 import actions from "../../store/actions";
 
 class MemoryCard extends React.Component {
    storeEditableCard(memoryCard) {
       console.log("STORING EDITABLE CARD");
-
-      // what if the card we delete is not in the queue?
-      // we need to understand if the card we are editing is in the queue
-
       this.props.dispatch({
          type: actions.STORE_EDITABLE_CARD,
          payload: {
@@ -18,13 +14,10 @@ class MemoryCard extends React.Component {
             prevRoute: "/all-cards",
          },
       });
-      this.props.history.push("/edit");
    }
 
    render() {
       const memoryCard = this.props.queue.cards[this.props.queue.index];
-      console.log(this.props.queue.cards, this.props.queue.index);
-      console.log(memoryCard);
       return (
          <div className="d-flex align-items-start mb-5">
             <div className="app-card flex-fill">
@@ -41,7 +34,8 @@ class MemoryCard extends React.Component {
                </div>
             </div>
 
-            <button
+            <Link
+               to="/edit"
                className="btn btn-link ml-4 d-flex mt-n2"
                onClick={() => {
                   this.storeEditableCard(memoryCard);
@@ -55,7 +49,7 @@ class MemoryCard extends React.Component {
                   alt=""
                />
                Edit
-            </button>
+            </Link>
          </div>
       );
    }
@@ -67,4 +61,4 @@ function mapStateToProps(state) {
    };
 }
 
-export default withRouter(connect(mapStateToProps)(MemoryCard));
+export default connect(mapStateToProps)(MemoryCard);
